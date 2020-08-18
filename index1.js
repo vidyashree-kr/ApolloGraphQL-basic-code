@@ -9,37 +9,60 @@ type Author{
     name:String
     books:[Book]
 }
+input booksInput{
+    title: String
+    author: String
+}
 type Mutation {
-    addBook(title: String,author: String): Book
+    addBook(input:booksInput): Book
+  }
+  type booksPayload{
+    books:[Book!]!
   }
 type Query{
-    books:[Book!]!
-    authors:[Author]
+    books:booksPayload
 }
+
 `
 
-const books = [
+const booksData = [
     {
-        title:"Hello World",
+        title:"Pride and Prejudice",
         author:{
-            name:"Vidya"
+            name:"Jane Austen"
+        }
+    },
+    {
+        title:"The Red and the Black ",
+        author:{
+            name:"Stendhal"
+        }
+    },
+    {
+        title:"The Brothers Karamazov ",
+        author:{
+            name:"Dostoevsky"
         }
     }
 ]
 const resolvers = {
     Query: {
-        books: () => books
+        books: () => {
+            return {
+                books: booksData,
+            }
+        }
     },
     Mutation: {
-        addBook: (parent, args) => {
+        addBook: (parent, {input}) => {
             const book = {
-                title: args.title,
+                title: input.title,
                 author: 
                 {
-                    name:args.author
+                    name:input.author
                 }
             }
-            books.push(book)
+            booksData.push(book)
             return book
         }
     }
